@@ -10,7 +10,7 @@ import java.util.List;
  * @create 2025/7/17
  */
 public class Tools {
-    public McpServerFeatures.SyncToolSpecification getToolSpecification() {
+    public static McpServerFeatures.SyncToolSpecification getSpec() {
         String schema = """
                 {
                   "type" : "object",
@@ -39,14 +39,15 @@ public class Tools {
                 .annotations(annotations)
                 .build();
 
-        return new McpServerFeatures.SyncToolSpecification(
-                tool,
-                (exchange, arguments) -> {
-                    // Implement the tool logic here
-                    String query = arguments.get("query").toString();
-                    McpSchema.TextContent result = new McpSchema.TextContent("Query result for: " + query);
-                    return new McpSchema.CallToolResult(List.of(result), false);
-                }
-        );
+        return McpServerFeatures.SyncToolSpecification.builder()
+                .tool(tool)
+                .callHandler(
+                        (exchange, request) -> {
+                            // Implement the tool logic here
+                            String query = request.arguments().get("query").toString();
+                            McpSchema.TextContent result = new McpSchema.TextContent("Query result for: " + query);
+                            return new McpSchema.CallToolResult(List.of(result), false);
+                        }
+                ).build();
     }
 }

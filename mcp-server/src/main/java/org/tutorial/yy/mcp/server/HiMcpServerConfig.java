@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.tutorial.yy.mcp.server.capabilities.Tools;
 
 /**
  * @author yyHuangfu
@@ -17,19 +18,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @EnableWebMvc
-public class HelloMcpServerConfig implements WebMvcConfigurer {
+public class HiMcpServerConfig implements WebMvcConfigurer {
 
     @Bean
-    public HelloMcpService helloMcpService() {
-        return new HelloMcpService();
-    }
+    public McpSyncServer mcpServer(HttpServletSseServerTransportProvider transport) {
 
-    @Bean
-    public McpSyncServer mcpServer(HttpServletSseServerTransportProvider transport, HelloMcpService helloMcpService) {
-
-        // Create a server with custom configurationMcpSyncServer syncServer = McpServer.sync(transport)
         McpSyncServer syncServer = McpServer.sync(transport)
-                .serverInfo("my-server", "1.0.0")
+                .serverInfo("hello-mcp-server", "1.0.0")
                 .capabilities(McpSchema.ServerCapabilities.builder()
                         .resources(false, true)  // Enable resource support
                         .tools(true)             // Enable tool support
@@ -40,7 +35,7 @@ public class HelloMcpServerConfig implements WebMvcConfigurer {
                 .build();
 
         // Register tools, resources, and prompts
-        syncServer.addTool(syncToolSpecification);
+        syncServer.addTool(Tools.getSpec());
         return syncServer;
         // Close the server when done
         // syncServer.close();
@@ -48,7 +43,7 @@ public class HelloMcpServerConfig implements WebMvcConfigurer {
 
     @Bean
     public HttpServletSseServerTransportProvider servletSseServerTransportProvider() {
-        return new HttpServletSseServerTransportProvider(new ObjectMapper(), "/mcp/message");
+        return new HttpServletSseServerTransportProvider(new ObjectMapper(), "/mcp", "/sse");
     }
 
     @Bean
