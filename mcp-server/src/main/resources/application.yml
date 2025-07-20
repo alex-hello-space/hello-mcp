@@ -1,5 +1,19 @@
 server:
   port: 8080
 spring:
+  ai:
+    mcp:
+      server:
+        enabled: true
+        stdio: false
+        name: hello-mcp-server
+        version: 1.0.0
+        type: SYNC
+        capabilities:
+          tool:  true
+        sse-message-endpoint: /mcp/message
+        sse-endpoint: /sse
+        base-url: /hello-mcp
+        request-timeout: 5000
   main:
     banner-mode: off
