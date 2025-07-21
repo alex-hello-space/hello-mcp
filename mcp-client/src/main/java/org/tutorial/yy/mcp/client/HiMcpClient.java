@@ -13,14 +13,22 @@ import java.util.function.Function;
  */
 public class HiMcpClient {
 
-    public static McpSyncClient from(String url) {
+    public static McpSyncClient createMcpClient(String url) {
         Function<McpSchema.ElicitRequest, McpSchema.ElicitResult> hiElicitationHandler =
                 request -> {
                     System.out.println("Elicitation request: " + request);
-                    // todo 实现用户交互逻辑
+                    System.out.print("是否允许此请求？(y/n): ");
+                    String input = new java.util.Scanner(System.in).nextLine().trim();
+
+                    McpSchema.ElicitResult.Action action;
+                    if ("y".equalsIgnoreCase(input)) {
+                        action = McpSchema.ElicitResult.Action.ACCEPT;
+                    } else {
+                        action = McpSchema.ElicitResult.Action.DECLINE;
+                    }
+
                     return McpSchema.ElicitResult.builder()
-                            .message(McpSchema.ElicitResult.Action.ACCEPT)
-                            .meta(request.meta())
+                            .message(action)
                             .content(request.requestedSchema())
                             .build();
                 };

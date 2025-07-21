@@ -21,4 +21,6 @@ public class HiMcpServerConfig implements WebMvcConfigurer {
     public List<McpServerFeatures.SyncToolSpecification> getTools() {
         return List.of(Tools.getSpec());
     }
+
+
 }
