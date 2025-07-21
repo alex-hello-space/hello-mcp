@@ -39,7 +39,8 @@ public class HelloMcpToolSpec {
                 .annotations(annotations)
                 .meta(
                         Map.of("author", "yyHuangfu",
-                                "filter", "pc_only"))
+                                "filter", "pc_only")
+                )
                 .build();
 
         return McpServerFeatures.SyncToolSpecification.builder()
