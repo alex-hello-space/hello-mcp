@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.tutorial.yy.mcp.server.capabilities.Tools;
 
 import java.util.List;
 
@@ -15,10 +14,12 @@ import java.util.List;
  */
 @Configuration
 @EnableWebMvc
-public class HiMcpServerConfig implements WebMvcConfigurer {
+public class McpServerConfig implements WebMvcConfigurer {
 
     @Bean
     public List<McpServerFeatures.SyncToolSpecification> getTools() {
-        return List.of(Tools.getSpec());
+        return List.of(HelloMcpToolSpec.getSpec());
     }
+
+
 }

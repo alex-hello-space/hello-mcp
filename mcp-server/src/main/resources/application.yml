@@ -11,9 +11,10 @@ spring:
         type: SYNC
         capabilities:
           tool:  true
+          elicitation: true  # Enable elicitation capability
         sse-message-endpoint: /mcp/message
         sse-endpoint: /sse
-        base-url: /hello-mcp
+#        base-url: /hello-mcp
         request-timeout: 5000
   main:
     banner-mode: off
