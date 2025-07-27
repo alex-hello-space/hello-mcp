@@ -14,7 +14,6 @@
     <modules>
         <module>mcp-client</module>
         <module>mcp-server</module>
-        <module>mcp</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -28,17 +27,19 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.springframework.ai</groupId>
-                <artifactId>spring-ai-bom</artifactId>
-                <version>1.1.0-SNAPSHOT</version>
-                <type>pom</type>
-                <scope>import</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.modelcontextprotocol.sdk</groupId>
-                        <artifactId>mcp</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>io.modelcontextprotocol.sdk</groupId>
+                <artifactId>mcp</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.modelcontextprotocol.sdk</groupId>
+                <artifactId>mcp-spring-webmvc</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.modelcontextprotocol.sdk</groupId>
+                <artifactId>mcp-spring-webflux</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
