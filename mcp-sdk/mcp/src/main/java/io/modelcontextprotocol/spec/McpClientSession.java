@@ -254,8 +254,8 @@ public class McpClientSession implements McpSession {
 			this.pendingResponses.put(requestId, pendingResponseSink);
 			McpSchema.JSONRPCRequest jsonrpcRequest = new McpSchema.JSONRPCRequest(McpSchema.JSONRPC_VERSION, method,
 					requestId, requestParams);
-			this.transport.sendMessage(jsonrpcRequest).contextWrite(ctx).subscribe(v -> {
-			}, error -> {
+			this.transport.sendMessage(jsonrpcRequest).contextWrite(ctx).subscribe(v -> {},
+					error -> {
 				this.pendingResponses.remove(requestId);
 				pendingResponseSink.error(error);
 			});
