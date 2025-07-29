@@ -356,20 +356,22 @@ public class HttpClientSseClientTransport implements McpClientTransport {
     public Mono<Void> connect(Function<Mono<JSONRPCMessage>, Mono<JSONRPCMessage>> handler) {
 
         return Mono.create(sink -> {
-
+            // 向server发送请求，建立sse长连接。因此这个sink success只是表示连接建立成功
             HttpRequest request = requestBuilder.copy()
                     .uri(Utils.resolveUri(this.baseUri, this.sseEndpoint))
                     .header("Accept", "text/event-stream")
                     .header("Cache-Control", "no-cache")
                     .GET()
                     .build();
-
-            Disposable connection = Flux.<ResponseEvent>create(sseSink -> this.httpClient
-                            .sendAsync(request, responseInfo -> ResponseSubscribers.sseToBodySubscriber(responseInfo, sseSink))
-                            .exceptionallyCompose(e -> {
-                                sseSink.error(e);
-                                return CompletableFuture.failedFuture(e);
-                            }))
+            // connection就是建立的长连接，后续服务端发送都复用这个连接: 服务端源头sseSink
+            Disposable connection = Flux.<ResponseEvent>create(sseSink ->
+                            this.httpClient.sendAsync(
+                                            request,
+                                            responseInfo -> ResponseSubscribers.sseToBodySubscriber(responseInfo, sseSink))
+                                    .exceptionallyCompose(e -> {
+                                        sseSink.error(e);
+                                        return CompletableFuture.failedFuture(e);
+                                    }))
                     .map(responseEvent -> (ResponseSubscribers.SseResponseEvent) responseEvent)
                     .flatMap(responseEvent -> {
                         if (isClosing) {
@@ -381,6 +383,7 @@ public class HttpClientSseClientTransport implements McpClientTransport {
                         if (statusCode >= 200 && statusCode < 300) {
                             try {
                                 if (ENDPOINT_EVENT_TYPE.equals(responseEvent.sseEvent().event())) {
+                                    // 服务端会主动发送url给客户端，让其去发送message
                                     String messageEndpointUri = responseEvent.sseEvent().data();
                                     if (this.messageEndpointSink.tryEmitValue(messageEndpointUri).isSuccess()) {
                                         sink.success();
@@ -406,6 +409,7 @@ public class HttpClientSseClientTransport implements McpClientTransport {
                                 new RuntimeException("Failed to send message: " + responseEvent));
 
                     })
+                    // 把sseSink的数据给到外部去处理
                     .flatMap(jsonRpcMessage -> handler.apply(Mono.just(jsonRpcMessage)))
                     .onErrorComplete(t -> {
                         if (!isClosing) {
