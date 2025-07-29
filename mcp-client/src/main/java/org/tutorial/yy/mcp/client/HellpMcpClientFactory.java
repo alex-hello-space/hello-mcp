@@ -5,6 +5,7 @@ import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
 import io.modelcontextprotocol.spec.McpSchema;
 
+import java.time.Duration;
 import java.util.function.Function;
 
 /**
@@ -40,6 +41,8 @@ public class HellpMcpClientFactory {
         return McpClient.sync(transport)
                 .clientInfo(new McpSchema.Implementation("hello-mcp-client", "1.0.0"))
                 .elicitation(hiElicitationHandler)
+                .initializationTimeout(Duration.ofSeconds(60))
+                .requestTimeout(Duration.ofSeconds(60))
                 .build();
     }
 }
